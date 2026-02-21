@@ -2,7 +2,7 @@
 
 # Contribute to the documentation
 
-Thank you for your interest in contributing to our documentation! This guide will help you get started.
+Thank you for your interest in contributing to our documentation This guide will help you get started.
 
 ## How to contribute
 
