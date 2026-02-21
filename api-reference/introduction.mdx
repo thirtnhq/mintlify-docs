@@ -1,33 +1,62 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introduction"
+description: "The Tavio API is a RESTful API that uses JSON for request and response bodies."
 ---
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
-
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All requests must be authenticated using your API key in the `Authorization` header.
+
+```bash
+Authorization: Bearer tv_live_xxxxxxxxxxxx
+```
+
+Use `tv_live_` prefixed keys for production and `tv_test_` prefixed keys for sandbox. API keys are generated and managed in the Tavio Dashboard under **Settings > API Keys**.
+
+## Base URL
+
+```bash
+https://api.tavio.io/v1
+```
+
+## Core Endpoints
+
+| Method | Endpoint             | Description                 |
+| :----- | :------------------- | :-------------------------- |
+| `POST` | `/payments`          | Create a new payment        |
+| `GET`  | `/payments/:id`      | Retrieve a payment          |
+| `POST` | `/quotes`            | Get a conversion quote      |
+| `POST` | `/payment-links`     | Create a payment link       |
+| `GET`  | `/payment-links/:id` | Retrieve a payment link     |
+| `POST` | `/invoices`          | Create an invoice           |
+| `POST` | `/invoices/:id/send` | Send an invoice by email    |
+| `POST` | `/payouts`           | Create a single payout      |
+| `POST` | `/payouts/bulk`      | Bulk payout disbursement    |
+| `GET`  | `/payouts/:id`       | Retrieve payout status      |
+| `POST` | `/refunds`           | Initiate a refund           |
+| `GET`  | `/transactions`      | List all transactions       |
+| `POST` | `/webhooks`          | Register a webhook endpoint |
+
+## Error Handling
+
+All errors follow a consistent format with an HTTP status code, error code, and human-readable message.
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "error": {
+    "code": "insufficient_liquidity",
+    "message": "Unable to find a conversion path for the requested amount.",
+    "docs": "https://docs.tavio.io/errors/insufficient_liquidity"
   }
-]
+}
 ```
+
+| HTTP Code | Error Code               | Meaning                                 |
+| :-------- | :----------------------- | :-------------------------------------- |
+| **400**   | `invalid_request`        | Missing or malformed request parameters |
+| **401**   | `unauthorized`           | Invalid or missing API key              |
+| **404**   | `not_found`              | Resource does not exist                 |
+| **409**   | `quote_expired`          | Quote has expired, request a new one    |
+| **422**   | `insufficient_liquidity` | No path found for conversion            |
+| **429**   | `rate_limited`           | Too many requests                       |
+| **500**   | `internal_error`         | Tavio-side error                        |

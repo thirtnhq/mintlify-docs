@@ -1,0 +1,76 @@
+---
+title: "Get a Quote"
+api: "POST /quotes"
+---
+
+### Body
+
+<ParamField body="from_currency" type="string" required>
+  The source currency code (e.g. `ETH`).
+</ParamField>
+<ParamField body="to_currency" type="string" required>
+  The target currency code (e.g. `USDC`).
+</ParamField>
+<ParamField body="amount" type="number" required>
+  The amount to convert.
+</ParamField>
+<ParamField body="direction" type="string" required>
+  Either `send` or `receive`.
+</ParamField>
+
+### Response
+
+<ResponseField name="quote_id" type="string">
+  The unique ID of the locked quote.
+</ResponseField>
+
+<ResponseField name="from_amount" type="number">
+  The exact amount being sent.
+</ResponseField>
+
+<ResponseField name="to_amount" type="number">
+  The exact amount being received.
+</ResponseField>
+
+<ResponseField name="rate" type="number">
+  The conversion rate applied.
+</ResponseField>
+
+<ResponseField name="fee" type="number">
+  The fee for the conversion.
+</ResponseField>
+
+<ResponseField name="expires_at" type="string">
+  ISO-8601 timestamp for quote expiry (quotes are locked for 30 seconds).
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.tavio.io/v1/quotes" \
+     -H "Authorization: Bearer tv_live_xxxxxxxxxxxx" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "from_currency": "ETH",
+           "to_currency": "USDC",
+           "amount": 0.5,
+           "direction": "send"
+         }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Response
+{
+  "quote_id": "qt_xyz789",
+  "from_amount": 0.5,
+  "to_amount": 1523.4,
+  "rate": 3046.8,
+  "fee": 4.57,
+  "expires_at": "2026-02-21T12:00:30Z"
+}
+```
+
+</ResponseExample>

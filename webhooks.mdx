@@ -1,0 +1,70 @@
+---
+title: "Webhooks"
+description: "Tavio uses webhooks to notify your server of payment events in real time."
+---
+
+# Webhooks
+
+Tavio uses webhooks to notify your server of payment events in real time. Register a webhook endpoint in the Dashboard or via the API, and Tavio will `POST` event data to that URL whenever a payment status changes.
+
+## Registering a Webhook
+
+```json
+POST /v1/webhooks
+{
+  "url": "https://yourapp.com/webhooks/tavio",
+  "events": ["payment.completed", "payment.failed", "payout.completed", "refund.created"]
+}
+```
+
+## Event Types
+
+| Event                | Triggered When                            |
+| :------------------- | :---------------------------------------- |
+| `payment.pending`    | Payment created and awaiting payer action |
+| `payment.processing` | Funds received, conversion in progress    |
+| `payment.completed`  | Settlement confirmed for merchant         |
+| `payment.failed`     | Payment expired or encountered an error   |
+| `payout.initiated`   | Payout job started                        |
+| `payout.completed`   | Recipient funds delivered                 |
+| `payout.failed`      | Payout could not be completed             |
+| `invoice.paid`       | Invoice fully settled                     |
+| `invoice.overdue`    | Invoice due date passed unpaid            |
+| `refund.created`     | Refund initiated                          |
+| `refund.completed`   | Refund delivered to payer                 |
+
+## Webhook Payload
+
+```json
+{
+  "id": "evt_abc123",
+  "type": "payment.completed",
+  "created_at": "2026-02-21T11:00:00Z",
+  "data": {
+    "payment_id": "pay_xyz789",
+    "amount": 10000,
+    "currency": "USD",
+    "settlement_amount": 99.42,
+    "settlement_asset": "USDC",
+    "stellar_txn_hash": "a1b2c3d4...",
+    "metadata": { "order_id": "ord_789" }
+  }
+}
+```
+
+## Verifying Webhook Signatures
+
+All Tavio webhook requests include a `Tavio-Signature` header. You should verify this signature using your webhook secret to ensure the request originated from Tavio.
+
+```javascript
+const crypto = require("crypto");
+
+function verifyWebhook(payload, signature, secret) {
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(payload)
+    .digest("hex");
+
+  return `sha256=${expected}` === signature;
+}
+```

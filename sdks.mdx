@@ -1,0 +1,92 @@
+---
+title: "SDK Reference"
+description: "Tavio offers official SDKs in JavaScript/TypeScript, Python, and Go."
+sidebarTitle: "SDKs"
+---
+
+# SDK Reference
+
+Tavio offers official SDKs in JavaScript/TypeScript, Python, and Go. All SDKs wrap the REST API and provide typed interfaces, error handling, and convenient builder patterns.
+
+## Installation
+
+<CodeGroup>
+  ```bash JavaScript
+  npm install @tavio/sdk
+  ```
+
+```bash Python
+pip install tavio
+```
+
+```bash Go
+go get github.com/tavio-io/tavio-go
+```
+
+</CodeGroup>
+
+## Initialization & Usage
+
+### Create a Payment
+
+<CodeGroup>
+  ```javascript JavaScript
+  import Tavio from "@tavio/sdk";
+
+const tavio = new Tavio({ apiKey: "tv_live_xxxxxxxxxxxx" });
+
+const payment = await tavio.payments.create({
+amount: 5000,
+currency: "USD",
+settlementAsset: "USDC",
+paymentMethods: ['card', 'crypto'],
+customer: { email: 'user@example.com' }
+});
+
+console.log(payment.checkoutUrl);
+
+````
+
+```python Python
+from tavio import TavioClient
+
+client = TavioClient(api_key="tv_live_xxxxxxxxxxxx")
+
+payment = client.payments.create(
+    amount=5000,
+    currency="USD",
+    settlement_asset="USDC",
+    customer={'email': 'user@example.com'}
+)
+
+print(payment.checkout_url)
+````
+
+```go Go
+import "github.com/tavio-io/tavio-go"
+
+client := tavio.NewClient("tv_live_xxxxxxxxxxxx")
+
+payment, err := client.Payments.Create(&tavio.PaymentParams{
+    Amount:          5000,
+    Currency:        "USD",
+    SettlementAsset: "USDC",
+})
+```
+
+</CodeGroup>
+
+### Create a Payout
+
+<CodeGroup>
+  ```javascript JavaScript
+  const payout = await tavio.payouts.create({
+    amount: 200,
+    currency: "USD",
+    recipient: {
+      name: "John Doe",
+      destination: { type: "bank_account", routing: "021000021", account: "9876543210" }
+    }
+  });
+  ```
+</CodeGroup>

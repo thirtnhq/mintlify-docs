@@ -1,97 +1,64 @@
 ---
 title: "Introduction"
-description: "Welcome to the new home for your documentation"
+description: "Pay anything. Settle everywhere."
 ---
 
-## Setting up
+# Introduction
 
-Get your documentation site up and running in minutes.
+Tavio is a full-stack payment infrastructure platform for businesses and developers. It unifies traditional fiat payment rails with crypto-native infrastructure enabling anyone to accept or send money across blockchain networks and currencies through a single SDK, API, or no-code dashboard.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+Tavio is built on the Stellar blockchain, leveraging Stellar's native path payments, Soroban smart contracts, and its global anchor network to deliver near-instant, low-cost settlement in any currency. The platform bridges the gap that currently exists between fiat-native processors (like Stripe or Flutterwave) and crypto-native payment solutions, giving businesses one place to handle everything.
 
-## Make it yours
+## Who is Tavio for?
 
-Design a docs site that looks great and empowers your users.
+Tavio serves two primary audiences:
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+- **Developers & Businesses (B2B)**: Teams building fintech products, marketplaces, e-commerce platforms, or any application that needs to accept or disburse payments across currencies and chains.
+- **End Consumers (B2C)**: Individuals paying for goods or services through a Tavio-powered checkout, payment link, or invoice, using fiat or crypto from any supported wallet or bank.
 
-## Create beautiful pages
+## The Problem Tavio Solves
 
-Everything you need to create world-class documentation.
+Today's payment landscape is fragmented in two directions:
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+- **Fiat-side**: Accepting payments globally means integrating multiple processors, managing currency conversion, dealing with high fees, and navigating complex compliance requirements per region.
+- **Crypto-side**: Every blockchain has its own tokens, wallets, liquidity silos, and developer tooling. A USDC on Ethereum is not the same as USDC on Solana forcing developers to build and maintain multi-chain infrastructure that most apps simply don't need.
 
-## Need inspiration?
+Tavio removes both layers of friction. Merchants choose where they want to settle—fiat account, crypto wallet, or Stellar asset—and Tavio handles everything in between.
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+---
+
+# Platform Architecture
+
+Tavio is composed of four core layers that work together to route, convert, and settle payments.
+
+## Inbound Layer
+
+The inbound layer is responsible for receiving payments from any source—a customer's credit card, bank transfer, or crypto wallet on any supported chain.
+
+- **Fiat inbound**: Card payments (Visa/Mastercard) and bank transfers (ACH, SEPA, local rails) are processed via licensed payment partners and converted to stablecoins on Stellar.
+- **Crypto inbound (same-chain)**: Direct deposits of Stellar-native assets (XLM, USDC on Stellar, any SEP-asset) are received natively.
+- **Crypto inbound (cross-chain)**: Assets from EVM chains (Ethereum, Base, Avalanche, etc.) are bridged using Circle CCTP for USDC and Wormhole for broader asset support. Assets from Solana are bridged similarly via Wormhole.
+
+## Routing & Conversion Layer
+
+Once funds arrive on Stellar, the routing engine determines the optimal conversion path to the merchant's preferred settlement asset.
+
+- **Stellar Path Payments**: Tavio uses Stellar's native path payment mechanism (`findStrictSendPaths` / `findStrictReceivePaths`) to find the best multi-hop route across the Stellar DEX and AMM liquidity pools.
+- **Soroban Smart Contracts**: Custom settlement logic, fee deduction, refund rules, and multi-tenant disbursement are handled by Soroban contracts deployed on Stellar Mainnet.
+- **Slippage protection and quote locking**: Tavio locks quotes for 30 seconds, ensuring the merchant receives exactly the quoted amount.
+
+## Settlement Layer
+
+Settlement is the final delivery of funds to the merchant or recipient. Tavio supports three settlement modes:
+
+- **Crypto Settlement**: Funds land in a Stellar wallet as any Stellar-native asset (USDC, XLM, or any anchored asset).
+- **Fiat Off-Ramp**: Stellar anchors (regulated on/off ramp operators using SEP-6/SEP-24 standards) convert on-chain funds to fiat and deliver to a bank account or mobile money wallet.
+- **Cross-Border Fiat**: Tavio supports Fiat → Stellar → Fiat flows for cross-border payments, enabling businesses to send money internationally at Stellar's near-zero transaction cost.
+
+## Developer & Merchant Layer
+
+The top layer is what developers and merchants interact with directly:
+
+- **Tavio SDK** (JavaScript/TypeScript, Python, Go) - Embed payment flows directly into applications.
+- **Tavio REST API** - Full programmatic control over payments, quotes, webhooks, and account management.
+- **Tavio Dashboard** - No-code tools for creating payment links, invoices, viewing transactions, and managing settings.

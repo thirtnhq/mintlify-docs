@@ -1,0 +1,114 @@
+---
+title: "Create a Payment"
+api: "POST /payments"
+---
+
+### Body
+
+<ParamField body="amount" type="number" required>
+  Amount in smallest currency unit.
+</ParamField>
+<ParamField body="currency" type="string" required>
+  Source currency (ISO 4217).
+</ParamField>
+<ParamField body="settlement_asset" type="string" required>
+  Asset merchant receives.
+</ParamField>
+<ParamField body="settlement_network" type="string" required>
+  Settlement destination. Only supports `stellar`.
+</ParamField>
+<ParamField body="payment_methods" type="array" required>
+  Allowed payment methods. For example: `["card", "bank_transfer", "crypto"]`.
+</ParamField>
+<ParamField body="customer" type="object" required>
+  Customer details including `email` and `name`.
+</ParamField>
+<ParamField body="metadata" type="object">
+  Optional key-value pairs for internal use (e.g. `order_id`).
+</ParamField>
+<ParamField body="redirect_url" type="string">
+  URL to redirect the user after payment.
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="string">
+  Payment ID (e.g. `pay_abc123`).
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Status of the payment (e.g. `pending`).
+</ResponseField>
+
+<ResponseField name="checkout_url" type="string">
+  Hosted checkout URL.
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Amount in smallest currency unit.
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  Source currency.
+</ResponseField>
+
+<ResponseField name="expires_at" type="string">
+  ISO-8601 timestamp for quote expiry.
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.tavio.io/v1/payments" \
+     -H "Authorization: Bearer tv_live_xxxxxxxxxxxx" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "amount": 10000,
+           "currency": "USD",
+           "settlement_asset": "USDC",
+           "settlement_network": "stellar",
+           "payment_methods": ["card", "bank_transfer", "crypto"],
+           "customer": {
+             "email": "customer@example.com",
+             "name": "Jane Doe"
+           },
+           "metadata": { "order_id": "ord_789" },
+           "redirect_url": "https://yourapp.com/payment/success"
+         }'
+```
+
+```javascript JavaScript
+import Tavio from "@tavio/sdk";
+
+const tavio = new Tavio({ apiKey: "tv_live_xxxxxxxxxxxx" });
+const payment = await tavio.payments.create({
+  amount: 10000,
+  currency: "USD",
+  settlementAsset: "USDC",
+  settlementNetwork: "stellar",
+  paymentMethods: ["card", "bank_transfer", "crypto"],
+  customer: {
+    email: "customer@example.com",
+    name: "Jane Doe",
+  },
+  metadata: { order_id: "ord_789" },
+  redirectUrl: "https://yourapp.com/payment/success",
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Response
+{
+  "id": "pay_abc123",
+  "status": "pending",
+  "checkout_url": "https://checkout.tavio.io/pay/abc123",
+  "amount": 10000,
+  "currency": "USD",
+  "expires_at": "2026-02-21T12:30:00Z"
+}
+```
+
+</ResponseExample>

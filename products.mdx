@@ -1,0 +1,147 @@
+---
+title: "Products"
+description: "Tavio offers five core product modules that can be used independently or together as a unified payment stack."
+---
+
+# Products
+
+Tavio offers five core product modules. Each can be used independently or together as a unified payment stack.
+
+## Tavio Gateway
+
+Tavio Gateway is a hosted checkout experience that accepts fiat and crypto payments in a single, embeddable flow. Merchants integrate it with a script tag or SDK call and immediately gain access to every payment method Tavio supports.
+
+### Key Features
+
+- Accepts credit/debit cards, bank transfers (ACH/SEPA/local rails), and crypto from 10+ chains in one checkout session.
+- Hosted by Tavio, PCI-DSS scope is handled entirely on Tavio's infrastructure.
+- Customizable branding: logo, colors, and domain via CNAME.
+- Real-time conversion quotes shown to the payer before confirmation.
+- Webhook notifications on payment status changes (pending, completed, failed, refunded).
+
+### Integration
+
+```javascript
+import { TavioCheckout } from "@tavio/sdk";
+
+const checkout = new TavioCheckout({
+  apiKey: "tv_live_xxxxxxxxxxxx",
+  amount: 5000, // in cents
+  currency: "USD",
+  settlementAsset: "USDC",
+  orderId: "order_123",
+  onSuccess: (payment) => console.log(payment),
+});
+
+checkout.open();
+```
+
+## Tavio Links
+
+Tavio Links lets merchants generate shareable payment URLs in seconds—no code required. Links can be shared via WhatsApp, email, SMS, or embedded in any digital surface.
+
+### Key Features
+
+- Create a link from the dashboard in under 30 seconds.
+- Set a fixed amount or allow the payer to choose the amount.
+- Supports expiry dates, single-use or multi-use links.
+- Accepts any Tavio-supported payment method.
+- Real-time dashboard notifications and webhook events.
+- Shareable via QR code (auto-generated for every link).
+
+### API Creation
+
+```json
+POST /v1/payment-links
+{
+  "amount": 2500,
+  "currency": "USD",
+  "description": "Design consultation - 1 hour",
+  "expires_at": "2026-03-01T00:00:00Z",
+  "single_use": false
+}
+```
+
+## Tavio Invoicing
+
+Tavio Invoicing provides a professional invoicing tool that lets businesses create, send, and track invoices with customers able to pay in fiat or crypto. Merchants always settle in their preferred currency.
+
+### Key Features
+
+- Create itemized invoices with line items, taxes, and discounts.
+- Supports partial payments and installment schedules.
+- Automatic payment reminders (3 days before, on due date, 3 days after).
+- PDF invoice generation with merchant branding.
+- Invoice status tracking: draft, sent, viewed, partially paid, paid, overdue.
+- Multi-currency invoicing - invoice in USD, EUR, NGN, or any supported currency.
+
+### Invoice Lifecycle
+
+<Steps>
+  <Step title="Create">Create the invoice from the dashboard or via API</Step>
+  <Step title="Send">Send to the customer via email or a custom link</Step>
+  <Step title="Customer Views & Pays">
+    Customer views the invoice and pays in fiat or crypto
+  </Step>
+  <Step title="Tavio Routes & Converts">
+    Tavio handles the transparent currency conversion natively on Stellar
+  </Step>
+  <Step title="Merchant Settles">
+    The merchant settles in their preferred currency (stablecoin, fiat, XLM,
+    etc)
+  </Step>
+</Steps>
+
+## Tavio Payouts
+
+Tavio Payouts is a global disbursement engine. Businesses can send bulk payments to individuals or other businesses worldwide—to bank accounts, mobile money wallets, or crypto wallets—in a single API call.
+
+### Key Features
+
+- Bulk payout API: send to 1 or 10,000 recipients in one request.
+- Supported destination types: bank account (local and SWIFT), mobile money (M-Pesa, MTN, Airtel), and crypto wallets on any supported chain.
+- Automatic FX conversion at the time of disbursement.
+- Payout scheduling: immediate, scheduled, or recurring.
+- Per-payout status tracking with webhook events.
+
+### API Example
+
+```json
+POST /v1/payouts/bulk
+{
+  "payouts": [
+    {
+      "recipient_id": "rec_abc123",
+      "amount": 10000,
+      "currency": "NGN",
+      "destination": { "type": "mobile_money", "provider": "mtn", "number": "+2348012345678" }
+    },
+    {
+      "recipient_id": "rec_def456",
+      "amount": 500,
+      "currency": "USD",
+      "destination": { "type": "bank_account", "routing": "021000021", "account": "1234567890" }
+    }
+  ]
+}
+```
+
+## Tavio On/Off Ramp
+
+Tavio's on/off ramp module enables direct fiat-to-crypto and crypto-to-fiat conversion for end users or as a white-label service for platforms building their own ramp experience.
+
+### On-Ramp (Fiat → Crypto)
+
+1. The user initiates a deposit in fiat (bank transfer, card, mobile money).
+2. Tavio converts to the target crypto asset via Stellar anchors and path payments.
+3. Crypto lands in the user's specified wallet within seconds of fiat confirmation.
+
+### Off-Ramp (Crypto → Fiat)
+
+1. Users send crypto to their Tavio off-ramp address (any supported chain).
+2. Tavio bridges and converts to stablecoin on Stellar, then uses anchor network to deliver fiat.
+3. Funds arrive in the user's bank account or mobile money wallet.
+
+### White-Label
+
+Platforms can embed Tavio's ramp directly into their product via the SDK or iframe embed, with full custom branding and their own KYC flow via Tavio's compliance API.
